@@ -1,0 +1,435 @@
+<html>
+<head>
+
+
+
+<style type="text/css">
+<!--
+
+	body	{	color: #000; background-color: #FFFFFF; text-align: left; 
+		margin: 5px; }
+	table { background-color: #FFFFFF; }
+	a, blockquote, body, div, html, input, li, p, pre, span, table, td, textarea, th, tr, h1, h2, h3, img  { 
+		font-size: 10pt; 
+		font-family: 'Lucida Sans Unicode', 'Lucida Grande', Arial, Helvetica, sans-serif;
+		 } 
+	form { display: inline; }
+	
+	.done { text-decoration: line-through;}
+	
+
+body { padding-left: 25px; padding-right: 25px; padding-bottom: 50px; padding-top: 50px; }
+
+
+	.item_comment { padding-left: 25px; color: #333; }
+	.page_title { font-size: 1.3em; padding-bottom: 20px; }
+	.section div { padding-left: 25px; text-indent: -25px; padding-top: 3px; }
+	.section { padding-bottom: 20px; }
+	.section_label { font-weight: bold; padding: 5px 0px 10px 0px; }
+	ul { list-style: none; }
+	li { text-indent: 0px;  }
+
+	.argument_d { font-style: italic; }
+	
+	
+	pre {
+		font-size: 10pt; 
+		font-family: 'Lucida Console', Monaco, monospace;
+		padding-bottom: 10pt; 
+		text-indent: none;
+		 } 
+-->
+</style>
+
+<title>
+MyID3: a Java ID3 Tag Library
+</title>
+
+</head>
+<body>
+
+
+<div>
+<img style="padding: 0px; margin-bottom: 25px; border: 1px solid #ccc; " src="IMG_1705.2a.jpg">
+</div>
+<!--
+-->
+
+<div class="doc_title" style="margin-bottom: 8px">
+</div>
+<div class="body">
+	<div class="page_title">
+		MyID3: a Java ID3 Tag Library.
+	</div>
+	<div class="section">
+		By Charles M. Chen, <a href="mailto:charlesmchen@gmail.com">charlesmchen@gmail.com</a>.
+	</div>
+
+	<div class="section_label">
+		Description
+	</div>
+	<div class="section">
+		<div>
+			Mp3 files encode their metadata (artist, song title, etc.) in ID3 tags.  
+		</div>
+		<div>
+			Note: <a href="http://id3lib.sourceforge.net/id3/id3v1.html">ID3v1</a> and
+			<a href="http://id3lib.sourceforge.net/id3/">ID3v2</a> are seperate tags formats.
+		</div>
+		<div>
+			This tag format is well documented at the site for the
+			open source c/c++ <a href="http://id3lib.sourceforge.net/">id3lib library</a>, 
+			which I strongly recommend over any other tag library.
+		</div>
+		<div>
+			MyID3 is a pure-Java library that can read & write ID3v1 and ID3v2 tags.
+		</div>
+		<div>
+			Although not yet version 1.0, MyID3 is working.  I've tested it with a wide variety of mp3s.
+		</div>
+		<div>
+			It is <a href="http://www.opensource.org/">Open Source</a>; free as in freedom and free as in beer. 
+		</div>
+		<div>
+			Full support for .m4a/.aac/.mpa files coming soon.
+		</div>
+	</div>
+
+	<div class="section_label">
+		Downloads
+	</div>
+	<div class="section">
+		<div>
+			Version 0.83 released December 3rd, 2008.
+		</div>
+		<div>
+			Binary: <a href="http://www.fightingquaker.com/myid3/myid3.jar">myid3.jar</a>
+		</div>
+		<div>
+			Source: <a href="http://www.fightingquaker.com/myid3/myid3-src.zip">myid3-src.zip</a>  
+		</div>
+		<div>
+			Source distribution includes binary, source and this document.
+			This project has three dependencies: 
+			<ul>
+				<li>
+			<a href="http://jakarta.apache.org/regexp/">Jakarta Regexp</a>,
+				and 
+				(tested up to version 5.2).  Jakarta Regexp is available under the same license as MyID3: 
+					the <a href="http://www.apache.org/licenses/">ASF (Apache) License</a>.
+				</li>
+				<li>
+			<a href="http://nanoxml.cyberelf.be/">Nanoxml</a>,
+				a lightweight XML parsing library.
+				(tested up to version 5.2).  Nanoxml is available under  
+					the <a href="http://www.opensource.org/licenses/zlib-license.html">zlib/libpng License</a>.
+				<b>Note: </b>	Nanoxml is only neccesary if you use the included GUI test tool.
+				</li>
+				<li>
+					I've recently open sourced the last dependency of this project, <a href="http://www.fightingquaker.com/sharedlib/">sharedlib</a>.
+				</li>
+			</ul>
+		</div>
+	</div>
+
+	
+	<div class="section_label">
+		Usage
+	</div>
+	<div class="section" >
+		<div>
+		MyID3 exposes two apis: a simplified interface, and a "raw" interface.
+		</div>
+	</div>
+	<div class="section" >
+		<div>
+			<b>The Simple Interface</b> hides the differences between the ID3v1 and ID3v2.  
+		</div>
+		<div>
+				It maps values from both tags into a MusicMetadata object which has 
+				typed accessor methods for the following fields:
+		Album, Artist, Comment, Compilation, Composer, Composer2, DurationSeconds, Genre, Producer, ProducerArtist, SongTitle, Year.
+		</div>
+		<div>
+<pre> 
+import org.cmc.music.myid3.*;
+import org.cmc.music.common.MusicMetadata;
+
+File src = ?;
+MusicMetadataSet src_set = new MyID3().read(src); // read metadata
+
+if (src_set == null) // perhaps no metadata
+	...
+	
+Debug.debug("src_set", src_set); // dump all info.
+Debug.debug("src_set", src_set.getArtist()); 
+
+MusicMetadata metadata = src_set.getSimplified();
+String artist = metadata.getArtist();  
+String album = metadata.getAlbum();  
+String song_title = metadata.getSongTitle(); 
+Number track_number = metadata.getTrackNumber(); 
+
+metadata.setArtist("Bob Marley");
+
+File dst = ...
+new MyID3().write(src, dst, src_set, metadata);  // write updated metadata
+
+</pre>
+		</div>
+	</div>
+	<div class="section" >
+		<div>
+			<b>The Raw Interface</b> exposes the differences between the ID3v1 and ID3v2,
+				every frame,
+				as well as the underlying bytes, etc.
+		</div>
+		<div>
+<pre> 
+import org.cmc.music.myid3.*;
+import org.cmc.music.common.MusicMetadata;
+
+File src = ?;
+MusicMetadataSet src_set = new MyID3().read(src); // read metadata
+String id3v1_artist = src_set.id3_v1_raw.values.getArtist();
+String id3v2_artist = src_set.id3_v2_raw.values.getArtist();
+
+byte id3v1_tag_bytes[] = src_set.id3_v1_raw.bytes; // tag bytes
+byte id3v2_tag_bytes[] = src_set.id3_v2_raw.bytes; // tag bytes
+
+Vector id3v2_frames = src_set.id3_v2_raw.frames; // 
+if (id3v2_frames.size() > 1)
+{
+	MyID3v2Frame first_frame = (MyID3v2Frame) id3v2_frames
+			.get(0);
+	String frame_frame_id = first_frame.frame_id;
+	byte frame_frame_bytes[] = first_frame.data_bytes;
+}
+</pre>
+		</div>
+
+
+	<div class="section_label">
+		Project status
+	</div>
+	<div class="section">
+ 
+	
+		<div>
+			Version 0.83 released December 3rd, 2008
+			<ol>
+			<li>
+				Improved the project and package structure.
+			</li>
+			<li>
+				Improved error handling throughout library.
+			</li>
+			<li>
+				Added many unit tests.
+			</li>
+			<li>
+				Fixed a bug around malformed UTF-16 text values.
+			</li>
+			<li>
+				Complete rewrite of id3v2 frame-to-metadata mapping.  
+				 	Added support for many more frames (types of id3v2 metadata).
+				 	Improved support for semi-numeric types like year, track number, etc.
+			</li>
+			<li>
+				Fixed long standing issue around year metadata.
+			</li>
+			<li>
+				Added strict (don't ignore warnings & errors) mode.
+			</li>
+			<li>
+				Removed the dependency on sharedlib.  Library now has only two dependencies, Apache Jakarta Regexp and JUnit.  
+				 	JUnit is only necessary for running the unit test suite.
+			</li>
+			</ol>
+		</div>
+
+		<div>
+			Version 0.82 released July 22nd, 2008.
+			<ol>
+			<li>
+				 Windows Media Player chokes on string encoded in big-endian UTF-16.
+				 I've switched to using little-endian.
+			</li>
+			<li>
+				Slightly improved Genre handling.
+			</li>
+			<li>
+				Rolled up a number of small changes and code cleanup.
+			</li>
+			</ol>
+		</div>
+		<div>
+			Version 0.81 released November 18th, 2007.
+			<ol>
+			<li>
+				Added Javadocs to source distribution.  
+				I need to add javadocs for the primary public classes, but... it is a start.
+			</li>
+			<li>
+				Add support for PIC/APIC.  
+				MusicMetadata now has getPictureList(), etc. methods.  
+				PIC images are now preserved when upgrading ID32 tags from version 2 to 3 or 4.
+			</li>
+			</ol>
+		</div>
+		<div>
+			Version 0.80 released October 6th, 2007.
+			<ol>
+			<li>
+				Fixed subtle issues around Unicode handling.  Removed dependency on nio to parse unicode.
+			</li>
+			</ol>
+		</div>
+		<div>
+			Version 0.79 released August 19th, 2007.
+			<ol>
+			<li>
+				Fixed a series of major bugs involving differences between ID3 version 2.3.0 and 2.4.0 tag and frame flags.
+			</li>
+			<li>
+				Remove a great deal of old cruft.
+			</li>
+			<li>
+				Fixed bugs around handling of UTF-8 text frames.
+			</li>
+			<li>
+				Reorganized the package structure of the project.
+			</li>
+			</ol>
+		</div>
+		<div>
+			Version 0.78 released June 17th, 2007.
+			<ol>
+			<li>
+				I've open sourced the last dependency of this project, <a href="http://www.fightingquaker.com/sharedlib/">sharedlib</a>.
+			</li>
+			</ol>
+		</div>
+		<div>
+			Version 0.77 released December 8th, 2006, fixing two encoding bugs.  
+			<ol>
+			<li>
+				Now writes ID3v2 tags in ID3v2.3.0 rather than ID3v2.4.0 as WinAmp and
+				iTunes weren't reading version 2.4.0 tags properly.  
+			</li>
+			<li>
+				 I've changed the frame order so that text frames always appear first.  
+			</li>
+			<li>
+				I've added the MyID3Listener interface which makes debugging & extending the code easier.
+			</li>
+			</ol>
+		</div>
+		<div>
+			Version 0.76 released September 16th, 2006, fixing a text encoding bug.
+		</div>
+		<div>
+			Version 0.75 released September 2nd, 2006.
+		</div>
+		
+		<br/>
+		
+		<div>
+			To do list: 
+			<ul>
+				<li>
+					Improve support for embeded images (PIC/APIC).
+				</li>
+				<li>
+					m4a support.
+				</li>
+				<li>
+					Make "cleaning up" of metadata optional.
+				</li>
+				<li>
+					Better handling of non-numeric track numbers.
+				</li>
+				<li>
+					Finer-grained error handling.
+				</li>
+				<li>
+					
+				</li>
+				<li>
+					Complete refactor of music metadata unification, metadata cleanup and &amp;
+					 binary frame handling.
+				</li>
+			<li>
+				Remove all error logging to console.
+			</li>
+			<li>
+				Fix all code labeled with TODO comment.
+			</li>
+			<li>
+				Add strict (don't ignore warnings & errors) mode.
+			</li>
+			<li>
+				Remove external dependencies, starting with jakarta regexp.
+			</li>
+
+<!--
+				<li class="done">
+				</li>
+-->
+			</ul>
+		</div>
+	</div>
+	
+	<div class="section_label">
+		Other music metadata libraries
+	</div>
+	<div class="section">
+	
+
+		<div>
+			I strongly recommend <a href="http://id3lib.sourceforge.net/">id3lib</a>.
+			It's fast, open source, and well-maintained.  It is written in c/c++.
+		</div>
+
+		<div>
+			Javazoom's <a href="http://www.javazoom.net/projects.html">JLayer & JLayerME</a>. 
+			This Java library decodes MP3 audio as well.  Include a J2ME edition.
+		</div>
+		<div>
+			Eric Farng's <a href="http://javamusictag.sourceforge.net/">Java ID3 Tag Library</a>.
+		</div>
+		<div>
+			Paul Grebenc's <a href="http://jid3.blinkenlights.org/">JID3</a>.
+		</div>
+		<div>
+			Florian Heer's <a href="http://www.ueberdosis.de/java/id3.html">ID3 aka mp3info aka ueberdosis</a>.
+		</div>
+		<div>
+			Jens Vonderheide's <a href="http://www.vdheide.de/projects.html">Java Library MP3</a>. 
+		</div>
+		<div>
+			I'm sure there are others as well.
+		</div>
+	</div>
+	
+	<div class="section_label">
+		License
+	</div>
+	<div class="section">
+		<div>
+			 This text is available under the <a href="http://www.apache.org/licenses/">ASF (Apache) License</a>.
+		</div>
+		<div>
+			This is a non-viral <a href="http://www.opensource.org/">Open Source</a> license.  
+		</div>
+	</div>
+	
+	<div>
+		<a href="http://www.fightingquaker.com/">home</a>
+	</div>
+	
+</div>
+
+
+</body>
+</html>
